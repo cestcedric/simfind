@@ -4,6 +4,7 @@
 class Search {
 
 public:
+	Search();
 	void setModel(std::string);
 	void setIntervall(double);
 
