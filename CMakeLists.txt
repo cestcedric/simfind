@@ -33,10 +33,15 @@ MARK_AS_ADVANCED(NameSpace)
 # eigenes
 set (simfind_sources
 	"src/main.cpp"
+	"src/search.cpp"
+	"src/initialState.cpp"
+	"src/excitation.cpp"
 	)
 
 set (simfind_headers
-	
+	"include/search.h"
+	"include/initialState.h"
+	"include/excitation.h"
 	)
 
 ADD_EXECUTABLE(SimFind ${SOURCE} ${simfind_sources} ${simfind_headers})
