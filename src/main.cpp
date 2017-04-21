@@ -3,12 +3,31 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "search.h"
+
+#include "../include/search.h"
+#include "../include/excitation.h"
+#include "../include/initialState.h"
 
 using namespace OpenSim;
 using namespace SimTK;
 
 int main(int argc, char* argv[]) {
+	if (argc > 3) {
+		std::string model = argv[1];
+		std::string controls = argv[2];
+		std::string initialState = argv[3];
+		Search s;
+		s.setModel(model);
+		s.setControls(controls);
+		s.setInitialState(initialState);
+
+		s.run();
+	}
+	else
+	{
+		std::cout << "please call the application like this: 'app path/to/model path/to/controlsTemplate path/to/initialStateTemplate" << std::endl;
+	}
+	/*
 	try {
 		std::string path("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim");
 		//std::string path("C:/OpenSim Models/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim");
@@ -27,7 +46,6 @@ int main(int argc, char* argv[]) {
 		std::clock_t startTime = std::clock();
 		tool->run();
 		auto t1 = 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC;
-		tool->setIn
 		
 		//with a different control file
 		startTime = std::clock();
@@ -67,4 +85,5 @@ int main(int argc, char* argv[]) {
 		std::cout << "UNRECOGNIZED EXCEPTION" << std::endl;
 		return 1;
 	}
+	*/
 }
