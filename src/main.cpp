@@ -25,6 +25,13 @@ int main(int argc, char* argv[]) {
 	}
 	else
 	{
+		Excitation e(1);
+		e.setTemplate("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/controls.xml");
+		std::vector<double> v(50);
+		for (int i = 0; i < 50; i++) {
+			v[i] = i;
+		}
+		std::cout << e.excite(v) << std::endl;
 		std::cout << "please call the application like this: 'app path/to/model path/to/controlsTemplate path/to/initialStateTemplate" << std::endl;
 	}
 	/*

@@ -11,25 +11,46 @@ std::string Excitation::excite(std::vector<double> v) {
 
 std::string Excitation::print() {
 	int entry = 0;
-	int limit = 10;// = number of lines vorlage
-	for (int i = 0; i < limit; i++) {
-		if (i == entry * 40 + 14) {
-			//array a = split at >
-			//write  a[0] + excitations[entry] + a[1]
+	std::stringstream out;
+	out << path << "_" << number << ".xml";
+	std::ofstream tmp(out.str());
+
+	for (int i = 0; i < numberOfLines; i++) {
+		if (i == (entry * 40 + 14)) {
+			tmp << "\t\t\t\t\t\t<value>" << excitations[entry] << "</value>\n";
 		}
 		else
 		{
-			if (i == entry * 40 + 18) {
-				//array a = split at >
-				//write  a[0] + excitations[entry] + a[1]
+			if (i == (entry * 40 + 18)) {
+				tmp << "\t\t\t\t\t\t<value>" << excitations[entry] << "</value>\n>";
+				entry++;
+			}
+			else
+			{
+				tmp << controls[i] << std::endl;
 			}
 		}
 	}
-	std::string path;
-	//path = outputstream
-	return path;
+	tmp.close();
+	return out.str();
 }
 
 void Excitation::setTemplate(std::string path) {
-	//vorlage = inputstream(path)
+	int size = path.size() - 4;
+	this->path = path.substr(0, size);//remove .xml at the end
+	std::cout << this->path << std::endl;
+	controls = std::vector<std::string>(2008);//should always stay the same
+	numberOfLines = 0;
+
+	std::ifstream tmp;
+	tmp.open(path);
+
+	for (int i = 0; i < 2008; i++) {
+		std::string line;
+		std::getline(tmp, line);
+		controls[i] = line;
+		numberOfLines++;
+	}
+
+	tmp.close();
 }

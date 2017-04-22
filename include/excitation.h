@@ -1,5 +1,9 @@
 #pragma once
 #include <OpenSim/OpenSim.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
 
 class Excitation {
 
@@ -10,8 +14,10 @@ public:
 
 private:
 	int number;
+	int numberOfLines;
+	std::string path;
 	std::vector<double> excitations;
-	//vorlage
+	std::vector<std::string> controls;
 
 	std::string print();
 	

@@ -34,4 +34,10 @@ void Search::run() {
 		}
 	}
 	*/
+	// 6 different initial states
+	//for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 10; j++) {
+
+		}
+	//}
 }
