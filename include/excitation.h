@@ -9,6 +9,7 @@ class Excitation {
 
 public:
 	Excitation(int);
+	void setNumber(int);
 	void setTemplate(std::string);
 	std::string excite(std::vector<double>);
 

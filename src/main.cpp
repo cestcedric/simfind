@@ -6,10 +6,13 @@
 
 #include "../include/search.h"
 #include "../include/excitation.h"
-#include "../include/initialState.h"
+#include "../include/results.h"
+
+#include "../soplex/src/soplex.h"
 
 using namespace OpenSim;
 using namespace SimTK;
+using namespace soplex;
 
 int main(int argc, char* argv[]) {
 	if (argc > 3) {
@@ -22,17 +25,69 @@ int main(int argc, char* argv[]) {
 		s.setInitialState(initialState);
 
 		s.run();
+		std::cout << model << std::endl;
+		std::cout << controls << std::endl;
+		std::cout << initialState << std::endl;
+
+		Excitation e(69);
+		e.setTemplate(controls);
+		std::vector<double> v(50);
+		for (int i = 0; i < 50; i++) {
+			v[i] = 2*i;
+		}
+		e.excite(v);
 	}
 	else
 	{
-		Excitation e(1);
-		e.setTemplate("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/controls.xml");
+		SoPlex mysoplex;
+
+		/* set the objective sense */
+		mysoplex.setIntParam(SoPlex::OBJSENSE, SoPlex::OBJSENSE_MINIMIZE);
+
+		/* we first add variables */
+		DSVector dummycol(0);
+		mysoplex.addColReal(LPCol(2.0, dummycol, infinity, 15.0));
+		mysoplex.addColReal(LPCol(3.0, dummycol, infinity, 20.0));
+
+		/* then constraints one by one */
+		DSVector row1(2);
+		row1.add(0, 1.0);
+		row1.add(1, 5.0);
+		mysoplex.addRowReal(LPRow(100.0, row1, infinity));
+
+		/* NOTE: alternatively, we could have added the matrix nonzeros in dummycol already; nonexisting rows are then
+		* automatically created. */
+
+		/* write LP in .lp format */
+		mysoplex.writeFileReal("dump.lp", NULL, NULL, NULL);
+
+		/* solve LP */
+		SPxSolver::Status stat;
+		DVector prim(2);
+		DVector dual(1);
+		stat = mysoplex.optimize();
+
+		/* get solution */
+		if (stat == SPxSolver::OPTIMAL)
+		{
+			mysoplex.getPrimalReal(prim);
+			mysoplex.getDualReal(dual);
+			std::cout << "LP solved to optimality.\n";
+			std::cout << "Objective value is " << mysoplex.objValueReal() << ".\n";
+			std::cout << "Primal solution is [" << prim[0] << ", " << prim[1] << "].\n";
+			std::cout << "Dual solution is [" << dual[0] << "].\n";
+		}
+
+		return 0;
+
+		/*Excitation e(14);
+		e.setTemplate("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/controls.xml");
 		std::vector<double> v(50);
 		for (int i = 0; i < 50; i++) {
 			v[i] = i;
 		}
-		std::cout << e.excite(v) << std::endl;
-		std::cout << "please call the application like this: 'app path/to/model path/to/controlsTemplate path/to/initialStateTemplate" << std::endl;
+		e.excite(v);*/
+		std::cout << "please call the application like this: 'app path/to/model path/to/controlsTemplate path/to/initialStateTemplate'" << std::endl;
 	}
 	/*
 	try {

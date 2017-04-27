@@ -14,7 +14,11 @@ public:
 private:
 	OpenSim::ForwardTool *fwd;
 	OpenSim::Model model;
+	Excitation *ex;
 	std::string pathControls;
 	std::string pathInitialState;
-	//struktur
+	//to save already used excitations, not sure if necessary
+	std::vector<std::vector<double>> done;
+
+	std::vector<double> getExcitations();
 };
