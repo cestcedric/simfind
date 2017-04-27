@@ -2,7 +2,7 @@
 
 Results::Results() {}
 
-void Results::add(int x, int y, int z) {
+void Results::add(double x, double y, double z) {
 	if (!isItIn(x, y, z)) {
 		point p;
 		p.x = x;
@@ -12,7 +12,7 @@ void Results::add(int x, int y, int z) {
 	}
 }
 
-bool Results::isItIn(int x, int y, int z) {
+bool Results::isItIn(double x, double y, double z) {
 	//use google thing for linear programming
 	return false;
 }

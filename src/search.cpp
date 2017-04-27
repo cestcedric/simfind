@@ -52,7 +52,8 @@ std::vector<double> Search::getExcitations() {
 
 void Search::run() {
 	//for (every initial state) {
-	//fwd->setStatesFileName(pathInitialState);
+	//add initial position to results, or make first simulation with 0 excitation
+	fwd->setStatesFileName(pathInitialState);
 	for (int i = 0; i < 3; i++) {
 		std::clock_t startTime = std::clock();
 
@@ -74,6 +75,10 @@ void Search::run() {
 		fwd->run();
 
 		//get results from analysis
+		addResults(i);
+
+
+
 		std::cout << 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC << std::endl;
 	}
 	//}
@@ -86,14 +91,7 @@ void Search::initResults() {
 	}
 }
 
+//add new final points to results
 void Search::addResults(int n) {
-	//if n = -1 add the inital position to result
-	std::ifstream tmp;
-	if (n == -1) {
-
-	}
-	else
-	{
-		
-	}
+	
 }

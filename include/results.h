@@ -16,8 +16,8 @@ public:
 private:
 	int number;
 	std::vector<point> points;//contains outer points
-	bool isItIn(int, int, int);
-	void add(int, int, int);
+	bool isItIn(double, double, double);
+	void add(double, double, double);
 
 	std::string print(int);
 
