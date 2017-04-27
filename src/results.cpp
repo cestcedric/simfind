@@ -1,8 +1,6 @@
 #include "../include/Results.h"
 
-Results::Results(int n) {
-
-}
+Results::Results() {}
 
 void Results::add(int x, int y, int z) {
 	if (!isItIn(x, y, z)) {
@@ -15,9 +13,11 @@ void Results::add(int x, int y, int z) {
 }
 
 bool Results::isItIn(int x, int y, int z) {
-
+	//use google thing for linear programming
+	return false;
 }
 
-std::string Results::print() {
-
+std::string Results::print(int n) {
+	//print points in a way so that matlab can draw the fancy pictures
+	return "";
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include <OpenSim/OpenSim.h>
-#include "../soplex/src/soplex.h"
+//include the google thingy
 
 struct point {
 	double x;
@@ -11,7 +11,7 @@ struct point {
 class Results {
 
 public:
-	Results(int);
+	Results();
 
 private:
 	int number;
@@ -19,7 +19,7 @@ private:
 	bool isItIn(int, int, int);
 	void add(int, int, int);
 
-	std::string print();
+	std::string print(int);
 
 
 };
