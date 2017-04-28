@@ -27,9 +27,11 @@ int main(int argc, char* argv[]) {
 	}
 	else
 	{
+		/*
 		//////////////////////////////////////////////
 		//////////////////////////////////////////////
-		std::string model = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/model.osim";
+		//std::string model = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/model.osim";
+		std::string model = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim";
 		std::string setup = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/setup.xml";
 		std::string controls = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/controls.xml";
 		std::string initialState = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/CMC_Reach8_states_abbrev.sto";
@@ -43,16 +45,13 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////
 		//////////////////////////////////////////////
 		std::cout << "please call the application like this: 'app path/to/model path/to/controlsTemplate path/to/initialStateTemplate'" << std::endl;
+		*/
 	}
-	/*
+	
 	try {
 		std::string path("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim");
 		//std::string path("C:/OpenSim Models/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim");
 		Model model(path);
-
-		//
-		InverseKinematicsTool *in = new InverseKinematicsTool("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim");
-		in->setCoordinateFileName("");
 
 		//simulation from 0.62 to 0.72
 
@@ -66,21 +65,21 @@ int main(int argc, char* argv[]) {
 		
 		//with a different control file
 		startTime = std::clock();
-		tool->setControlsFileName("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/controls.xml");
+		//tool->setControlsFileName("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/controls.xml");
 		//tool->setControlsFileName("C:/OpenSim Models/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/controls.xml");
-		tool->addAnalysisSetToModel();
-		tool->run();
+		//tool->addAnalysisSetToModel();
+		//tool->run();
 		auto t2 = 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC;
 
 		//with different first states file
 		startTime = std::clock();
-		tool->setStatesFileName("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/CMC_Reach8_states_abbrev - Kopie.sto");
+		//tool->setStatesFileName("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/CMC_Reach8_states_abbrev - Kopie.sto");
 		//tool->setStatesFileName("C:/OpenSim Models/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation/CMC_Reach8_states_abbrev - Kopie.sto");
-		tool->run();
+		//tool->run();
 		auto t3 = 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC;
 		//command line, standard controls
 		startTime = std::clock();
-		system("cd E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation && forward -S \"MoBL_ARMS_module7_FDS_Setup - Kopie - Kopie.xml\"");
+		//system("cd E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation && forward -S \"MoBL_ARMS_module7_FDS_Setup - Kopie - Kopie.xml\"");
 		//system("cd C:/OpenSim Models/MoBL-ARMS OpenSim tutorial_33/ModelFiles/InputFiles_module7_CMCDrivenFowardSimulation && forward -S \"MoBL_ARMS_module7_FDS_Setup - Kopie - Kopie.xml\"");
 		auto t4 = 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC;
 		
@@ -102,5 +101,5 @@ int main(int argc, char* argv[]) {
 		std::cout << "UNRECOGNIZED EXCEPTION" << std::endl;
 		return 1;
 	}
-	*/
+	
 }

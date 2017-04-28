@@ -10,7 +10,6 @@ void Excitation::setNumber(int n) {
 
 std::string Excitation::excite(std::vector<double> v) {
 	excitations = v;
-	std::cout << "excited" << std::endl;
 	return print();
 }
 
@@ -19,7 +18,6 @@ std::string Excitation::print() {
 	std::stringstream out;
 	//new controls file is put into Controls folder to seem organized
 	out << path << "Controls/controls_" << number << ".xml";
-	std::cout << out.str() << std::endl;
 	std::ofstream tmp(out.str());
 
 	for (int i = 0; i < numberOfLines; i++) {
