@@ -93,5 +93,69 @@ void Search::initResults() {
 
 //add new final points to results
 void Search::addResults(int n) {
-	
+	std::string directory = fwd->getResultsDir();
+	std::string fds = "/FDS_PointKinematics";
+	std::vector<double> tmp;
+
+	std::cout << directory << std::endl;
+	std::vector<std::stringstream> streams;
+	std::stringstream ana1;
+	std::stringstream ana2;
+	std::stringstream ana3;
+	std::stringstream ana4;
+	std::stringstream ana5;
+	std::stringstream ana6;
+	std::stringstream ana7;
+	std::stringstream ana8;
+	std::stringstream ana9;
+	std::stringstream ana10;
+
+	ana1 << directory << "/FDS_PointKinematics1_R.Clavicle_pos.sto";
+	tmp = readFile(ana1.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics2_C7_pos.sto";
+	tmp = readFile(ana2.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics3_R.Shoulder_pos.sto";
+	tmp = readFile(ana3.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics4_R.Biceps_pos.sto";
+	tmp = readFile(ana4.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "FDS_PointKinematics5_R.Elbow.Lateral_pos.sto";
+	tmp = readFile(ana5.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics6_R.Forearm_pos.sto";
+	tmp = readFile(ana6.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics7_R.Radius_pos.sto";
+	tmp = readFile(ana7.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics8_Handle_pos.sto";
+	tmp = readFile(ana8.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics9_R.Elbow.Medial_pos.sto";
+	tmp = readFile(ana9.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+
+	ana2 << directory << "/FDS_PointKinematics10_R.Ulna_pos.sto";
+	tmp = readFile(ana10.str());
+	results[n].add(tmp[0], tmp[1], tmp[2]);
+}
+
+std::vector<double>  Search::readFile(std::string path) {
+	std::string line;
+	std::ifstream tmp;
+	tmp.open(path);
+	std::getline(tmp, line);
+	std::getline(tmp, line);
+	std::getline(tmp, line);
 }

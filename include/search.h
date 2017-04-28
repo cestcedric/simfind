@@ -25,6 +25,8 @@ private:
 	std::vector<std::vector<double>> done;
 
 	std::vector<double> getExcitations();
-	void addResults(int);
+	void addResults(int n);
+	std::vector<double> readFile(std::string);
+
 	void initResults();
 };

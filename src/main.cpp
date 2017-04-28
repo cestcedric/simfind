@@ -27,14 +27,17 @@ int main(int argc, char* argv[]) {
 	}
 	else
 	{
-		/*
+		
 		//////////////////////////////////////////////
 		//////////////////////////////////////////////
 		//std::string model = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/model.osim";
-		std::string model = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim";
-		std::string setup = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/setup.xml";
-		std::string controls = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/controls.xml";
-		std::string initialState = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/CMC_Reach8_states_abbrev.sto";
+		std::string model = "C:/files/model.osim";
+		//std::string setup = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/setup.xml";
+		std::string setup = "C:/files/setup.xml";
+		//std::string controls = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/controls.xml";
+		std::string controls = "C:/files/controls.xml";
+		//std::string initialState = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/CMC_Reach8_states_abbrev.sto";
+		std::string initialState = "C:/files/CMC_Reach8_states_abbrev.sto";
 		Search s(setup);
 		s.setModel(model);
 		s.setControls(controls);
@@ -45,9 +48,10 @@ int main(int argc, char* argv[]) {
 		//////////////////////////////////////////////
 		//////////////////////////////////////////////
 		std::cout << "please call the application like this: 'app path/to/model path/to/controlsTemplate path/to/initialStateTemplate'" << std::endl;
-		*/
+		
 	}
 	
+	/*
 	try {
 		std::string path("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/MoBL_ARMS_OpenSim33tutorial/MoBL_ARMS_tutorial_33/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim");
 		//std::string path("C:/OpenSim Models/MoBL-ARMS OpenSim tutorial_33/ModelFiles/MoBL_ARMS_module6_7_CMC.osim");
@@ -101,5 +105,5 @@ int main(int argc, char* argv[]) {
 		std::cout << "UNRECOGNIZED EXCEPTION" << std::endl;
 		return 1;
 	}
-	
+	*/
 }
