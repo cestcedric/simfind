@@ -43,7 +43,6 @@ std::string Excitation::print() {
 void Excitation::setTemplate(std::string path) {
 	int size = path.size() - 12;
 	this->path = path.substr(0, size);//remove .xml at the end
-	std::cout << this->path << std::endl;
 	controls = std::vector<std::string>(2008);//should always stay the same
 	numberOfLines = 0;
 

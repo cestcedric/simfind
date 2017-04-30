@@ -196,7 +196,7 @@
 			<objects>
 				<ControlSetController>
 					<!--A Storage (.sto) or an XML control nodes file containing the controls for this controlSet.-->
-					<controls_file>E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/Controls/controls_0.xml</controls_file>
+					<controls_file>E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/controls.xml</controls_file>
 				</ControlSetController>
 			</objects>
 			<groups />

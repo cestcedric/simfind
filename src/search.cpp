@@ -11,18 +11,18 @@ Search::Search() {
 }
 
 Search::Search(std::string setup) {
-	fwd = new OpenSim::ForwardTool(setup);
+	pathSetup = setup;
 	ex = new Excitation(0);
+	std::vector<Results> v(10);
+	results = v;
 }
 
 void Search::setModel(std::string m) {
 	model = OpenSim::Model(m);
-	fwd->setModel(model);
 }
 
 void Search::setIntervall(double t) {
-	fwd->setInitialTime(0);
-	fwd->setFinalTime(t);
+	intervall = t;
 }
 
 void Search::setControls(std::string path) {
@@ -52,14 +52,21 @@ std::vector<double> Search::getExcitations() {
 
 void Search::run() {
 	//for (every initial state) {
+	initResults();
 	//add initial position to results, or make first simulation with 0 excitation
-	fwd->setStatesFileName(pathInitialState);
-	for (int i = 0; i < 3; i++) {
+	
+	
+	for (int i = 0; i < 10; i++) {
+		
 		std::clock_t startTime = std::clock();
+
+		fwd = new OpenSim::ForwardTool(pathSetup);
+		fwd->setModel(model);
+		fwd->setStatesFileName(pathInitialState);
 
 		//generate excitations
 		std::vector<double> v = getExcitations();
-		done.push_back(v);//check if already excited like this?
+		excited.push_back(v);//check if already excited like this?
 
 		//generate controls file
 		ex->setNumber(i);
@@ -70,34 +77,35 @@ void Search::run() {
 		out << "output/output_" << i;
 		fwd->setResultsDir(out.str());
 		fwd->setControlsFileName(controls);
-		//setIntervall(0.1);
 
 		fwd->run();
 
 		//get results from analysis
 		addResults(i);
 
-
-
 		std::cout << 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC << std::endl;
+
+	}
+	for (int i = 0; i < 10; i++) {
+		std::cout << results[i].print() << std::endl;
 	}
 	//}
 }
 
 void Search::initResults() {
+	std::string directory = pathControls.substr(0, pathControls.size() - 12);
+	std::stringstream s;
+	s << directory << "output/markers";
 	for (int i = 0; i < 10; i++) {
-		Results r;
-		results.push_back(r);
+		Results r(s.str(), i);
+		results[i] = r;
 	}
 }
 
 //add new final points to results
 void Search::addResults(int n) {
-	std::string directory = fwd->getResultsDir();
-	std::string fds = "/FDS_PointKinematics";
+	std::string directory = pathControls.substr(0, pathControls.size() - 12);
 	std::vector<double> tmp;
-
-	std::cout << directory << std::endl;
 	std::vector<std::stringstream> streams;
 	std::stringstream ana1;
 	std::stringstream ana2;
@@ -110,52 +118,82 @@ void Search::addResults(int n) {
 	std::stringstream ana9;
 	std::stringstream ana10;
 
-	ana1 << directory << "/FDS_PointKinematics1_R.Clavicle_pos.sto";
+	ana1 << directory << "output/output_" << n << "/FDS_PointKinematics1_R.Clavicle_pos.sto";
 	tmp = readFile(ana1.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[0].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics2_C7_pos.sto";
+	ana2 << directory << "output/output_" << n << "/FDS_PointKinematics2_C7_pos.sto";
 	tmp = readFile(ana2.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[1].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics3_R.Shoulder_pos.sto";
+	ana3 << directory << "output/output_" << n << "/FDS_PointKinematics3_R.Shoulder_pos.sto";
 	tmp = readFile(ana3.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[2].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics4_R.Biceps_pos.sto";
+	ana4 << directory << "output/output_" << n << "/FDS_PointKinematics4_R.Biceps_pos.sto";
 	tmp = readFile(ana4.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[3].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "FDS_PointKinematics5_R.Elbow.Lateral_pos.sto";
+	ana5 << directory << "output/output_" << n << "/FDS_PointKinematics5_R.Elbow.Lateral_pos.sto";
 	tmp = readFile(ana5.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[4].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics6_R.Forearm_pos.sto";
+	ana6 << directory << "output/output_" << n << "/FDS_PointKinematics6_R.Forearm_pos.sto";
 	tmp = readFile(ana6.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[5].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics7_R.Radius_pos.sto";
+	ana7 << directory << "output/output_" << n << "/FDS_PointKinematics7_R.Radius_pos.sto";
 	tmp = readFile(ana7.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[6].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics8_Handle_pos.sto";
+	ana8 << directory << "output/output_" << n << "/FDS_PointKinematics8_Handle_pos.sto";
 	tmp = readFile(ana8.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[7].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics9_R.Elbow.Medial_pos.sto";
+	ana9 << directory << "output/output_" << n << "/FDS_PointKinematics9_R.Elbow.Medial_pos.sto";
 	tmp = readFile(ana9.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[8].add(tmp[0], tmp[1], tmp[2]);
 
-	ana2 << directory << "/FDS_PointKinematics10_R.Ulna_pos.sto";
+	ana10 << directory << "output/output_" << n << "/FDS_PointKinematics10_R.Ulna_pos.sto";
 	tmp = readFile(ana10.str());
-	results[n].add(tmp[0], tmp[1], tmp[2]);
+	results[9].add(tmp[0], tmp[1], tmp[2]);
 }
 
 std::vector<double>  Search::readFile(std::string path) {
 	std::string line;
 	std::ifstream tmp;
 	tmp.open(path);
+	//get number of lines
 	std::getline(tmp, line);
 	std::getline(tmp, line);
 	std::getline(tmp, line);
+	int rows = atoi(line.substr(6, line.length()).c_str());
+	//go to last line
+	for (int i = 3; i < rows + 8; i++) {
+		std::getline(tmp, line);
+	}
+	//split last line to get coordinates
+	std::vector<double> position(3);
+	//find the decimal dots -> one digit before and 20 after
+	int p = line.find(".");
+	//remove time
+	line.erase(0, p + 21);
+	//state_0
+	p = line.find(".");
+	std::string x = line.substr(p - 2, p + 21);
+	line.erase(0, p + 21);
+	//state_1
+	p = line.find(".");
+	std::string y = line.substr(p - 2, p + 21);
+	line.erase(0, p + 21);
+	//state_2
+	p = line.find(".");
+	std::string z = line.substr(p - 2, p + 21);
+
+	//save positions in vector
+	position[0] = std::stod(x);
+	position[1] = std::stod(y);
+	position[2] = std::stod(z);
+
+	return position;
 }
