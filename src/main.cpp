@@ -45,6 +45,8 @@ int main(int argc, char* argv[]) {
 		s.setInitialState(initialState);
 		std::cout << "now run" << std::endl;
 		s.setIntervall(0.1);
+		s.binary(true);
+		s.group(true);
 
 		s.run();
 		//////////////////////////////////////////////

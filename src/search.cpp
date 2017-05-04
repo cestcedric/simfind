@@ -47,6 +47,33 @@ std::vector<double> Search::getExcitations() {
 	for (int i = 0; i < 50; i++) {
 		v[i] = dis(gen);
 	}
+
+	if (b) {//excitations 0 or 1
+		for (int i = 0; i < 50; i++) {
+			v[i] = (int)(v[i] + 0.5);
+		}
+	}
+
+	if (g && b) {//groups of muscles, only grouping when also binary excitation
+		v[1] = v[2] = v[3] = v[4] = v[0]; //group 1: DELT1, ...
+		
+		v[7] = v[11] = v[12] = v[13] = v[5]; //group 2: SUBSC, LAT, ...
+		
+		v[9] = v[10] = v[14] = v[8]; //group 3: PECM, ...
+		
+		v[16] = v[17] = v[18] = v[15]; //group 4: TRI, ...
+		
+		v[21] = v[22] = v[23] = v[20]; //group 5: BIC, ...
+		
+		v[25] = v[24]; //group 6: ECRL, ECRB
+		
+		v[28] = v[29] = v[30] = v[31] = v[32] = v[33] = v[27];//group 7: FCR, FCU, ...
+		v[34] = v[35] = v[36] = v[37] = v[38] = v[39] = v[27];
+		v[48] = v[49] = v[27];
+		
+		v[41] = v[42] = v[43] = v[44] = v[45] = v[46] = v[47] = v[40];//group 8: EDCL, ...
+	}
+
 	return v;
 }
 
@@ -56,7 +83,7 @@ void Search::run() {
 	//add initial position to results, or make first simulation with 0 excitation
 	
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 1; i++) {
 		
 		std::clock_t startTime = std::clock();
 
@@ -85,9 +112,6 @@ void Search::run() {
 
 		std::cout << 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC << std::endl;
 
-	}
-	for (int i = 0; i < 10; i++) {
-		std::cout << results[i].print() << std::endl;
 	}
 	//}
 }
@@ -196,4 +220,12 @@ std::vector<double>  Search::readFile(std::string path) {
 	position[2] = std::stod(z);
 
 	return position;
+}
+
+void Search::group(bool g) {
+	this->g = g;
+}
+
+void Search::binary(bool b) {
+	this->b = b;
 }

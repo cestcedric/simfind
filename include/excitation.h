@@ -21,6 +21,4 @@ private:
 	std::vector<std::string> controls;
 
 	std::string print();
-	
-
 };

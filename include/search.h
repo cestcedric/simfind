@@ -14,6 +14,8 @@ public:
 	void setControls(std::string);
 	void setInitialState(std::string);
 	void run();
+	void group(bool);
+	void binary(bool);
 
 private:
 	OpenSim::ForwardTool *fwd;
@@ -25,6 +27,9 @@ private:
 	std::string pathSetup;
 	std::vector<Results> results;
 	double intervall;
+
+	bool b;
+	bool g;
 	
 	//to save already used excitations, not sure if necessary
 	std::vector<std::vector<double>> excited;
