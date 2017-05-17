@@ -43,9 +43,8 @@ int main(int argc, char* argv[]) {
 		s.setModel(model);
 		s.setControls(controls);
 		s.setInitialState(initialState);
-		std::cout << "now run" << std::endl;
-		s.setIntervall(0.1);
 		s.binary(true);
+		s.count(true);
 		s.group(true);
 
 		s.run();

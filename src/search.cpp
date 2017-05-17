@@ -18,7 +18,7 @@ Search::Search(std::string setup) {
 }
 
 void Search::setModel(std::string m) {
-	model = OpenSim::Model(m);
+	pathModel = m;
 }
 
 void Search::setIntervall(double t) {
@@ -34,7 +34,7 @@ void Search::setInitialState(std::string path) {
 	pathInitialState = path;
 }
 
-std::vector<double> Search::getExcitations() {
+std::vector<double> Search::getExcitations(int n) {
 	std::vector<double> v(50);
 
 	//http://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
@@ -44,34 +44,50 @@ std::vector<double> Search::getExcitations() {
 	//might want to change that
 	std::uniform_real_distribution<> dis(0, 1);
 
-	for (int i = 0; i < 50; i++) {
-		v[i] = dis(gen);
-	}
-
-	if (b) {//excitations 0 or 1
+	if (!c) {
 		for (int i = 0; i < 50; i++) {
-			v[i] = (int)(v[i] + 0.5);
+			v[i] = dis(gen);
 		}
+
+		if (b) {//excitations 0 or 1
+			for (int i = 0; i < 50; i++) {
+				v[i] = (int)(v[i] + 0.5);
+			}
+		}
+	}
+	else
+	{
+		v[0] = n % 2;
+		v[5] = (n / 2) % 2;
+		v[8] = (n / 4) % 2;
+		v[15] = (n / 8) % 2;
+		v[20] = (n / 16) % 2;
+		v[24] = (n / 32) % 2;
+		v[27] = (n / 64) % 2;
+		v[40] = (n / 128) % 2;
+		v[19] = (n / 256) % 2;
 	}
 
 	if (g && b) {//groups of muscles, only grouping when also binary excitation
 		v[1] = v[2] = v[3] = v[4] = v[0]; //group 1: DELT1, ...
-		
+
 		v[7] = v[11] = v[12] = v[13] = v[5]; //group 2: SUBSC, LAT, ...
-		
+
 		v[9] = v[10] = v[14] = v[8]; //group 3: PECM, ...
-		
+
 		v[16] = v[17] = v[18] = v[15]; //group 4: TRI, ...
-		
+
 		v[21] = v[22] = v[23] = v[20]; //group 5: BIC, ...
-		
+
 		v[25] = v[24]; //group 6: ECRL, ECRB
-		
+
 		v[28] = v[29] = v[30] = v[31] = v[32] = v[33] = v[27];//group 7: FCR, FCU, ...
 		v[34] = v[35] = v[36] = v[37] = v[38] = v[39] = v[27];
 		v[48] = v[49] = v[27];
-		
-		v[41] = v[42] = v[43] = v[44] = v[45] = v[46] = v[47] = v[40];//group 8: EDCL, ...
+
+		v[41] = v[42] = v[43] = v[45] = v[46] = v[47] = v[40];//group 8: EDCL, ...
+
+		v[44] = v[26] = v[19];//group 9: ECU, SUP, EDM
 	}
 
 	return v;
@@ -82,36 +98,69 @@ void Search::run() {
 	initResults();
 	//add initial position to results, or make first simulation with 0 excitation
 	
-	
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 16; i++) {
 		
 		std::clock_t startTime = std::clock();
 
-		fwd = new OpenSim::ForwardTool(pathSetup);
+		//reload model everytime because it slows down otherwise
+		model = OpenSim::Model(pathModel);
+
+		OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
+		auto t1 = std::clock() - startTime;
+		startTime = std::clock();
 		fwd->setModel(model);
+		auto t2 = std::clock() - startTime;
+		startTime = std::clock();
 		fwd->setStatesFileName(pathInitialState);
+		auto t3 = std::clock() - startTime;
+		startTime = std::clock();
 
 		//generate excitations
-		std::vector<double> v = getExcitations();
-		excited.push_back(v);//check if already excited like this?
+		std::vector<double> v = getExcitations(i);
+		auto t4 = std::clock() - startTime;
+		startTime = std::clock();
 
 		//generate controls file
 		ex->setNumber(i);
+		auto t5 = std::clock() - startTime;
+		startTime = std::clock();
 		std::string controls = ex->excite(v);
+		auto t6 = std::clock() - startTime;
+		startTime = std::clock();
 
 		//configure forward tool
 		std::stringstream out;
 		out << "output/output_" << i;
+		auto t7 = std::clock() - startTime;
+		startTime = std::clock();
 		fwd->setResultsDir(out.str());
-		fwd->setControlsFileName(controls);
+		auto t8 = std::clock() - startTime;
+		startTime = std::clock();
+		//fwd->setControlsFileName(controls);
+		auto t9 = std::clock() - startTime;
+		startTime = std::clock();
 
 		fwd->run();
+		auto t10 = std::clock() - startTime;
+		startTime = std::clock();
 
 		//get results from analysis
 		addResults(i);
+		auto t11 = std::clock() - startTime;
 
-		std::cout << 1.e3*(std::clock() - startTime) / CLOCKS_PER_SEC << std::endl;
-
+		std::ofstream times("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/times.txt", std::ios_base::app);
+		times << 1.e3*t1 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t2 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t3 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t4 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t5 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t6 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t7 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t8 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t9 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t10 / CLOCKS_PER_SEC << "\t\t";
+		times << 1.e3*t11 / CLOCKS_PER_SEC << "\n";
+		times.close();
 	}
 	//}
 }
@@ -228,4 +277,8 @@ void Search::group(bool g) {
 
 void Search::binary(bool b) {
 	this->b = b;
+}
+
+void Search::count(bool c) {
+	this->c = c;
 }

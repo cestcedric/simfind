@@ -15,8 +15,5 @@ public:
 
 private:
 	int number;
-	std::list<std::vector<double>> points;//contains outer points
 	std::string path;
-
-	bool isItIn(double, double, double);
 };

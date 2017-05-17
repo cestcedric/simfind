@@ -16,27 +16,34 @@ std::string Excitation::excite(std::vector<double> v) {
 std::string Excitation::print() {
 	int entry = 0;
 	std::stringstream out;
+	std::stringstream t;
 	//new controls file is put into Controls folder to seem organized
 	out << path << "Controls/controls_" << number << ".xml";
+	t << path << "/controls.xml";
 	std::ofstream tmp(out.str());
+	std::ofstream test(t.str());
 
 	for (int i = 0; i < numberOfLines; i++) {
 		if (i == (entry * 40 + 14)) {
 			tmp << "\t\t\t\t\t\t<value>" << excitations[entry] << "</value>\n";
+			test << "\t\t\t\t\t\t<value>" << excitations[entry] << "</value>\n";
 		}
 		else
 		{
 			if (i == (entry * 40 + 18)) {
 				tmp << "\t\t\t\t\t\t<value>" << excitations[entry] << "</value>\n>";
+				test << "\t\t\t\t\t\t<value>" << excitations[entry] << "</value>\n";
 				entry++;
 			}
 			else
 			{
 				tmp << controls[i] << std::endl;
+				test << controls[i] << std::endl;
 			}
 		}
 	}
 	tmp.close();
+	test.close();
 	return out.str();
 }
 

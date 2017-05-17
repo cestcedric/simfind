@@ -16,12 +16,13 @@ public:
 	void run();
 	void group(bool);
 	void binary(bool);
+	void count(bool);
 
 private:
-	OpenSim::ForwardTool *fwd;
-	OpenSim::AnalyzeTool *ana;
+	//OpenSim::ForwardTool *fwd;
 	OpenSim::Model model;
 	Excitation *ex;
+	std::string pathModel;
 	std::string pathControls;
 	std::string pathInitialState;
 	std::string pathSetup;
@@ -29,12 +30,13 @@ private:
 	double intervall;
 
 	bool b;
+	bool c;
 	bool g;
 	
 	//to save already used excitations, not sure if necessary
 	std::vector<std::vector<double>> excited;
 
-	std::vector<double> getExcitations();
+	std::vector<double> getExcitations(int n);
 	void addResults(int n);
 	std::vector<double> readFile(std::string);
 
