@@ -98,7 +98,7 @@ void Search::run() {
 	initResults();
 	//add initial position to results, or make first simulation with 0 excitation
 	
-	for (int i = 0; i < 16; i++) {
+	for (int i = 439; i < 512; i++) {
 		
 		std::clock_t startTime = std::clock();
 
