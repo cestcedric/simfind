@@ -15,6 +15,9 @@ Search::Search(std::string setup) {
 	ex = new Excitation(0);
 	std::vector<Results> v(10);
 	results = v;
+	b = g = e = rrt = rrtp = false;
+	steps = 5;
+	iterations = 2500;
 }
 
 void Search::setModel(std::string m) {
@@ -44,7 +47,7 @@ std::vector<double> Search::getExcitations(int n) {
 	//might want to change that
 	std::uniform_real_distribution<> dis(0, 1);
 
-	if (!c) {
+	if (!e) {
 		for (int i = 0; i < 50; i++) {
 			v[i] = dis(gen);
 		}
@@ -94,12 +97,37 @@ std::vector<double> Search::getExcitations(int n) {
 }
 
 void Search::run() {
-	//for (every initial state) {
 	initResults();
-	//add initial position to results, or make first simulation with 0 excitation
-	
-	for (int i = 439; i < 512; i++) {
-		
+	if (e) {
+		enumerateSearch();
+	}
+	else
+	{
+		if (rrt) {
+			standardRRT();
+		}
+		else
+		{
+			customRRT();
+		}
+	}
+}
+
+void Search::initResults() {
+	std::string directory = pathControls.substr(0, pathControls.size() - 12);
+	std::stringstream s;
+	s << directory << "output/markers";
+	for (int i = 0; i < 10; i++) {
+		Results r(s.str(), i);
+		results[i] = r;
+	}
+}
+
+void Search::enumerateSearch() {
+	b = true;
+	g = true;
+	for (int i = 0; i < 512; i++) {
+
 		std::clock_t startTime = std::clock();
 
 		//reload model everytime because it slows down otherwise
@@ -162,17 +190,67 @@ void Search::run() {
 		times << 1.e3*t11 / CLOCKS_PER_SEC << "\n";
 		times.close();
 	}
-	//}
 }
 
-void Search::initResults() {
-	std::string directory = pathControls.substr(0, pathControls.size() - 12);
-	std::stringstream s;
-	s << directory << "output/markers";
-	for (int i = 0; i < 10; i++) {
-		Results r(s.str(), i);
-		results[i] = r;
+void Search::standardRRT() {
+	b = true;
+	g = false;
+	e = false;
+
+	int numOfStates = 1;
+
+	for (int i = 0; i < iterations; i++) {
+		//generate random state = angles
+		std::vector<double> random = setAngles();
+
+		//find nearest old state nos
+		for (int s = 0; s < numOfStates; s++) {
+
+		}
+
+		//create random excitations ex
+
+		//simulate, initial state = nos, controls = x
+
+		//save new final state
+
+		//add to markers
 	}
+}
+
+void Search::customRRT() {
+
+}
+
+std::vector<double> Search::setAngles() {
+	std::vector<double> angles(7);
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	//because of the way this library function works, the outcoming value is [a, b)
+	//it's really close though
+	std::uniform_real_distribution<> elv_angle(-1.5708, 2.26893);
+	std::uniform_real_distribution<> shoulder_elv(0, 3.14159);
+	std::uniform_real_distribution<> shoulder_rot(-1.5708, 0.349066);
+	std::uniform_real_distribution<> elbow_flexion(0, 2.26893);
+	std::uniform_real_distribution<> pro_sup(-1.5708, 1.4708);
+	std::uniform_real_distribution<> deviation(-0.174533, 0.436332);
+	std::uniform_real_distribution<> flexion(-1.22173, 1.22173);
+
+	angles[0] = elv_angle(gen);
+	angles[1] = shoulder_elv(gen);
+	angles[2] = shoulder_rot(gen);
+	angles[3] = elbow_flexion(gen);
+	angles[4] = pro_sup(gen);
+	angles[5] = deviation(gen);
+	angles[6] = flexion(gen);
+
+	return angles;
+}
+
+double Search::distance(std::vector<double> r, std::string s) {
+	return 1;
 }
 
 //add new final points to results
@@ -279,6 +357,22 @@ void Search::binary(bool b) {
 	this->b = b;
 }
 
-void Search::count(bool c) {
-	this->c = c;
+void Search::enumerate(bool e) {
+	this->e = e;
+}
+
+void Search::random(bool rrt) {
+	this->rrt = rrt;
+}
+
+void Search::randomwithbenefits(bool rrtp) {
+	this->rrtp = rrtp;
+}
+
+void Search::stepsRRT(int steps) {
+	this->steps = steps;
+}
+
+void Search::iterationsRRT(int iterations) {
+	this->iterations = iterations;
 }

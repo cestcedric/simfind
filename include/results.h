@@ -1,9 +1,10 @@
 #pragma once
-#include <OpenSim/OpenSim.h>
+//#include <OpenSim/OpenSim.h>
 #include <fstream>
-#include <vector>
-#include <list>
-//include the google thingy
+#include <sstream>
+//#include <string>
+//#include <vector>
+//#include <list>
 
 class Results {
 
@@ -11,7 +12,6 @@ public:
 	Results();
 	Results(std::string, int);
 	void add(double, double, double);
-	std::string print();
 
 private:
 	int number;

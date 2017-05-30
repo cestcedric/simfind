@@ -16,7 +16,12 @@ public:
 	void run();
 	void group(bool);
 	void binary(bool);
-	void count(bool);
+	void enumerate(bool);
+	void random(bool);
+	void randomwithbenefits(bool);
+
+	void stepsRRT(int);
+	void iterationsRRT(int);
 
 private:
 	//OpenSim::ForwardTool *fwd;
@@ -30,8 +35,12 @@ private:
 	double intervall;
 
 	bool b;
-	bool c;
 	bool g;
+	bool e;
+	bool rrt;
+	bool rrtp;
+	int steps;
+	int iterations;
 	
 	//to save already used excitations, not sure if necessary
 	std::vector<std::vector<double>> excited;
@@ -40,5 +49,13 @@ private:
 	void addResults(int n);
 	std::vector<double> readFile(std::string);
 
+	std::vector<double> setAngles();
+	double distance(std::vector<double>, std::string);
+
 	void initResults();
+
+	//search methods
+	void enumerateSearch();
+	void standardRRT();
+	void customRRT();
 };

@@ -34,12 +34,14 @@ MARK_AS_ADVANCED(NameSpace)
 set (simfind_sources
 	"src/main.cpp"
 	"src/search.cpp"
+	"src/states.cpp"
 	"src/results.cpp"
 	"src/excitation.cpp"
 	)
 
 set (simfind_headers
 	"include/search.h"
+	"include/states.h"
 	"include/results.h"
 	"include/excitation.h"
 	)
