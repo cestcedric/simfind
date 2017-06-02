@@ -32,6 +32,7 @@ private:
 	std::string pathInitialState;
 	std::string pathSetup;
 	std::vector<Results> results;
+	
 	double intervall;
 
 	bool b;
@@ -41,17 +42,16 @@ private:
 	bool rrtp;
 	int steps;
 	int iterations;
-	
-	//to save already used excitations, not sure if necessary
-	std::vector<std::vector<double>> excited;
 
 	std::vector<double> getExcitations(int n);
 	void addResults(int n);
 	std::vector<double> readFile(std::string);
 
 	std::vector<double> setAngles();
-	double distance(std::vector<double>, std::string);
 
+	std::string findNext(std::string, int);
+	
+	double distance(std::vector<double>, std::string);
 	void initResults();
 
 	//search methods

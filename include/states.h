@@ -6,9 +6,10 @@
 class States {
 	
 public:
-	States(std::string, std::string, int);
+	States();
 
 	int getRank(std::string);
 	std::vector<double> getAngles(std::string);
+	void save(std::string, std::string, int);
 
 };

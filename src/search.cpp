@@ -1,6 +1,7 @@
 #include "../include/search.h"
 #include "../include/excitation.h"
 #include "../include/results.h"
+#include "../include/states.h"
 
 #include <math.h>
 #include <random>
@@ -128,67 +129,83 @@ void Search::enumerateSearch() {
 	g = true;
 	for (int i = 0; i < 512; i++) {
 
-		std::clock_t startTime = std::clock();
+		//std::clock_t startTime = std::clock();
 
 		//reload model everytime because it slows down otherwise
 		model = OpenSim::Model(pathModel);
 
 		OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
-		auto t1 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t1 = std::clock() - startTime;
+		//startTime = std::clock();
+
 		fwd->setModel(model);
-		auto t2 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t2 = std::clock() - startTime;
+		//startTime = std::clock();
+
 		fwd->setStatesFileName(pathInitialState);
-		auto t3 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t3 = std::clock() - startTime;
+		//startTime = std::clock();
 
 		//generate excitations
 		std::vector<double> v = getExcitations(i);
-		auto t4 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t4 = std::clock() - startTime;
+		//startTime = std::clock();
 
 		//generate controls file
 		ex->setNumber(i);
-		auto t5 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t5 = std::clock() - startTime;
+		//startTime = std::clock();
+
 		std::string controls = ex->excite(v);
-		auto t6 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t6 = std::clock() - startTime;
+		//startTime = std::clock();
 
 		//configure forward tool
 		std::stringstream out;
 		out << "output/output_" << i;
-		auto t7 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t7 = std::clock() - startTime;
+		//startTime = std::clock();
+
 		fwd->setResultsDir(out.str());
-		auto t8 = std::clock() - startTime;
-		startTime = std::clock();
+
+		//auto t8 = std::clock() - startTime;
+		//startTime = std::clock();
+
 		//fwd->setControlsFileName(controls);
-		auto t9 = std::clock() - startTime;
-		startTime = std::clock();
+		
+		//auto t9 = std::clock() - startTime;
+		//startTime = std::clock();
 
 		fwd->run();
-		auto t10 = std::clock() - startTime;
-		startTime = std::clock();
+		
+		//auto t10 = std::clock() - startTime;
+		//startTime = std::clock();
 
 		//get results from analysis
 		addResults(i);
-		auto t11 = std::clock() - startTime;
+		
+		//auto t11 = std::clock() - startTime;
 
-		std::ofstream times("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/times.txt", std::ios_base::app);
-		times << 1.e3*t1 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t2 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t3 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t4 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t5 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t6 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t7 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t8 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t9 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t10 / CLOCKS_PER_SEC << "\t\t";
-		times << 1.e3*t11 / CLOCKS_PER_SEC << "\n";
-		times.close();
+		//std::ofstream times("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/times.txt", std::ios_base::app);
+		//times << 1.e3*t1 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t2 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t3 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t4 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t5 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t6 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t7 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t8 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t9 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t10 / CLOCKS_PER_SEC << "\t\t";
+		//times << 1.e3*t11 / CLOCKS_PER_SEC << "\n";
+		//times.close();
 	}
 }
 
@@ -198,28 +215,90 @@ void Search::standardRRT() {
 	e = false;
 
 	int numOfStates = 1;
+	States st;
+
+	std::string directory = pathControls.substr(0, pathControls.size() - 12);
+	std::string next;
 
 	for (int i = 0; i < iterations; i++) {
-		//generate random state = angles
-		std::vector<double> random = setAngles();
 
-		//find nearest old state nos
-		for (int s = 0; s < numOfStates; s++) {
+		//reload model every iteration to avoid "contamination"
+		model = OpenSim::Model(pathModel);
 
-		}
+		OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
+		fwd->setModel(model);
+		
+		//get new initial state
+		next = findNext(directory, numOfStates);
+		fwd->setStatesFileName(next);
 
-		//create random excitations ex
+		//random excitations
+		std::vector<double> v = getExcitations(i);
+		ex->setNumber(i);
+		std::string controls = ex->excite(v);
 
-		//simulate, initial state = nos, controls = x
+		//set output
+		std::stringstream out;
+		out << "output/output_" << i;
+		fwd->setResultsDir(out.str());
 
-		//save new final state
+		//set time intervall
+		fwd->setInitialTime(0);
+		fwd->setFinalTime(intervall / (double) steps);
 
-		//add to markers
+
+		//run
+		fwd->run();
+
+		//add final marker positions
+		addResults(i);
+
+		//save final state in RRT
+		std::stringstream newState;
+		std::stringstream results;
+		newState << directory << "output/states/initialState_" << i + 1 << ".sto";
+		results << directory << "output/output_" << i << "/FDS_states.sto";
+		st.save(results.str(), newState.str(), st.getRank(next) + 1);
+
+		numOfStates++;
 	}
 }
 
 void Search::customRRT() {
 
+}
+
+//best state = closest to random generated position AND time still smaller than the intervall
+// => take state farther state if nearest is too late
+std::string Search::findNext(std::string directory, int n) {
+	std::string best;
+	States st;
+	
+	//generate random state = angles
+	std::vector<double> random = setAngles();
+
+	std::stringstream init;
+	init << directory << "output/states/initialState_0.sto";
+
+	double minDist = distance(random, init.str()) + 1;
+
+	std::cout << steps << std::endl;
+	
+	//find nearest old state nos
+	for (int s = 0; s < n; s++) {
+		std::stringstream nos;
+		nos << directory << "output/states/initialState_" << s << ".sto";
+
+		double d = distance(random, nos.str());
+
+		if (st.getRank(nos.str()) <= steps && d < minDist) {//closest state with still time to go
+			std::cout << "drin" << std::endl;
+			minDist = d;
+			best = nos.str();
+		}
+	}
+	std::cout << "best : " << best << std::endl;
+	return best;
 }
 
 std::vector<double> Search::setAngles() {
@@ -249,8 +328,20 @@ std::vector<double> Search::setAngles() {
 	return angles;
 }
 
+//euclidean distance
 double Search::distance(std::vector<double> r, std::string s) {
-	return 1;
+	States t;
+	std::vector<double> a = t.getAngles(s);
+
+	double d = 0;
+
+	for (int i = 0; i < a.size(); i++) {
+		d = d + pow((r[i] - a[i]), 2);
+	}
+
+	d = sqrt(d);
+
+	return d;
 }
 
 //add new final points to results
