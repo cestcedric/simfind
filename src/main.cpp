@@ -50,6 +50,7 @@ int main(int argc, char* argv[]) {
 		s.random(true);//RRT
 		s.stepsRRT(10);
 		s.setIntervall(0.1);
+		s.iterationsRRT(25000);
 
 		s.run();
 		

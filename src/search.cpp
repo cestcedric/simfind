@@ -260,6 +260,9 @@ void Search::standardRRT() {
 		results << directory << "output/output_" << i << "/FDS_states.sto";
 		st.save(results.str(), newState.str(), st.getRank(next) + 1);
 
+		std::ofstream states("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/states.txt", std::ios_base::app);
+		states << fwd->getStatesFileName() << std::endl;
+
 		numOfStates++;
 	}
 }
@@ -292,7 +295,6 @@ std::string Search::findNext(std::string directory, int n) {
 		double d = distance(random, nos.str());
 
 		if (st.getRank(nos.str()) <= steps && d < minDist) {//closest state with still time to go
-			std::cout << "drin" << std::endl;
 			minDist = d;
 			best = nos.str();
 		}
@@ -325,21 +327,30 @@ std::vector<double> Search::setAngles() {
 	angles[5] = deviation(gen);
 	angles[6] = flexion(gen);
 
+	std::ofstream angle("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/angles.txt", std::ios_base::app);
+	angle << angles[0] << "\t" << angles[1] << "\t" << angles[2] << "\t" << angles[3] << "\t" << angles[4] << "\t" << angles[5] << "\t" << angles[6] << "\t" << std::endl;
+
 	return angles;
 }
 
-//euclidean distance
+//euclidean distance -> really does not choose many starting points
+//linear distance? -> good randomization of initial states
 double Search::distance(std::vector<double> r, std::string s) {
 	States t;
 	std::vector<double> a = t.getAngles(s);
 
 	double d = 0;
 
+	/*
 	for (int i = 0; i < a.size(); i++) {
 		d = d + pow((r[i] - a[i]), 2);
 	}
 
 	d = sqrt(d);
+	*/
+	for (int i = 0; i < a.size(); i++) {
+		d = d + abs(abs(r[i]) - abs(a[i]));
+	}
 
 	return d;
 }
