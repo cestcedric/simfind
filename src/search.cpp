@@ -9,17 +9,19 @@
 
 
 Search::Search() {
-	Search("");
+	Search("",0,0);
 }
 
-Search::Search(std::string setup) {
+Search::Search(std::string setup, int start, int end) {
 	pathSetup = setup;
 	ex = new Excitation(0);
 	std::vector<Results> v(10);
 	results = v;
-	b = g = e = rrt = rrtp = false;
+	b = c = g = e = rrt = rrtp = false;
 	steps = 5;
 	iterations = 2500;
+	this->start = start;
+	this->end = end;
 }
 
 void Search::setModel(std::string m) {
@@ -133,7 +135,7 @@ void Search::enumerateSearch() {
 		//std::clock_t startTime = std::clock();
 
 		//reload model everytime because it slows down otherwise
-		model = OpenSim::Model(pathModel);
+		OpenSim::Model model = OpenSim::Model(pathModel);
 
 		OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
 
@@ -211,6 +213,7 @@ void Search::enumerateSearch() {
 }
 
 void Search::standardRRT() {
+	iterations = end - start;
 	b = true;
 	g = false;
 	e = false;
@@ -221,10 +224,10 @@ void Search::standardRRT() {
 	std::string directory = pathControls.substr(0, pathControls.size() - 12);
 	std::string next;
 
-	for (int i = 0; i < iterations; i++) {
+	for (int i = start; i < end; i++) {
 
 		//reload model every iteration to avoid "contamination"
-		model = OpenSim::Model(pathModel);
+		OpenSim::Model model = OpenSim::Model(pathModel);
 
 		OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
 		fwd->setModel(model);
@@ -270,8 +273,14 @@ void Search::standardRRT() {
 
 		numOfStates++;
 
-		cleanuponaisle(i);
+		if (c) {
+			cleanuponaisle(i);
+		}
 	}
+}
+
+void Search::cleanup() {
+	c = true;
 }
 
 void Search::cleanuponaisle(int i) {
@@ -320,6 +329,10 @@ void Search::cleanuponaisle(int i) {
 		DeleteFile(here.str().c_str());
 	}
 	RemoveDirectory(aisle.str().c_str());
+
+	std::stringstream controls;
+	controls << pathControls.substr(0, pathControls.size() - 12) << "Controls/controls_" << i << ".xml";
+	DeleteFile(controls.str().c_str());
 }
 
 void Search::customRRT() {
@@ -382,8 +395,8 @@ std::vector<double> Search::setAngles() {
 	angles[5] = deviation(gen);
 	angles[6] = flexion(gen);
 
-	//std::ofstream angle("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/angles.txt", std::ios_base::app);
-	std::ofstream angle("C:/files/output/angles.txt", std::ios_base::app);
+	std::ofstream angle("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/angles.txt", std::ios_base::app);
+	//std::ofstream angle("C:/files/output/angles.txt", std::ios_base::app);
 	angle << angles[0] << "\t" << angles[1] << "\t" << angles[2] << "\t" << angles[3] << "\t" << angles[4] << "\t" << angles[5] << "\t" << angles[6] << "\t" << std::endl;
 
 	return angles;

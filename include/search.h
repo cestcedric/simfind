@@ -8,7 +8,7 @@ class Search {
 
 public:
 	Search();
-	Search(std::string);
+	Search(std::string, int, int);
 	void setModel(std::string);
 	void setIntervall(double);
 	void setControls(std::string);
@@ -21,11 +21,14 @@ public:
 	void randomwithbenefits(bool);
 
 	void stepsRRT(int);
-	void iterationsRRT(int);
+	
+
+	void cleanup();
 
 private:
+	void iterationsRRT(int);
 	//OpenSim::ForwardTool *fwd;
-	OpenSim::Model model;
+	//OpenSim::Model model;
 	Excitation *ex;
 	std::string pathModel;
 	std::string pathControls;
@@ -42,6 +45,11 @@ private:
 	bool rrtp;
 	int steps;
 	int iterations;
+
+	int start;
+	int end;
+
+	bool c;
 
 	std::vector<double> getExcitations(int n);
 	void addResults(int n);
