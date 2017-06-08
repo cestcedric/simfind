@@ -261,7 +261,11 @@ void Search::standardRRT() {
 		results << directory << "output/output_" << i << "/FDS_states.sto";
 		st.save(results.str(), newState.str(), st.getRank(next) + 1);
 
-		std::ofstream states("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/states.txt", std::ios_base::app);
+
+		std::stringstream controlOutput;
+		controlOutput << directory << "output/states.txt";
+
+		std::ofstream states(controlOutput.str(), std::ios_base::app);
 		states << fwd->getStatesFileName() << std::endl;
 
 		numOfStates++;
@@ -378,14 +382,16 @@ std::vector<double> Search::setAngles() {
 	angles[5] = deviation(gen);
 	angles[6] = flexion(gen);
 
-	std::ofstream angle("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/angles.txt", std::ios_base::app);
+	//std::ofstream angle("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/angles.txt", std::ios_base::app);
+	std::ofstream angle("C:/files/output/angles.txt", std::ios_base::app);
 	angle << angles[0] << "\t" << angles[1] << "\t" << angles[2] << "\t" << angles[3] << "\t" << angles[4] << "\t" << angles[5] << "\t" << angles[6] << "\t" << std::endl;
 
 	return angles;
 }
 
 //euclidean distance -> really does not choose many starting points
-//linear distance? -> good randomization of initial states
+//linear distance -> ridiculously low amount of different starting points
+//weird distance that is not even a distance -> pretty good randomization
 double Search::distance(std::vector<double> r, std::string s) {
 	States t;
 	std::vector<double> a = t.getAngles(s);
@@ -399,9 +405,16 @@ double Search::distance(std::vector<double> r, std::string s) {
 
 	d = sqrt(d);
 	*/
+	/*
+	for (int i = 0; i < a.size(); i++) {
+		d = d + abs(r[i] - a[i]);
+	}
+	*/
+	
 	for (int i = 0; i < a.size(); i++) {
 		d = d + abs(abs(r[i]) - abs(a[i]));
 	}
+	
 
 	return d;
 }
