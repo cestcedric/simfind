@@ -50,9 +50,12 @@ int main(int argc, char* argv[]) {
 		s.random(true);//RRT
 		s.stepsRRT(10);
 		s.setIntervall(0.1);
-		s.iterationsRRT(25000);
+		s.iterationsRRT(50000);
 
 		s.run();
+		
+		DeleteFile("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/test/file.txt");
+		RemoveDirectory("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/test");
 		
 
 		//States t;

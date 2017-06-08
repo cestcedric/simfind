@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <random>
+#include <Windows.h>
 
 
 Search::Search() {
@@ -264,7 +265,57 @@ void Search::standardRRT() {
 		states << fwd->getStatesFileName() << std::endl;
 
 		numOfStates++;
+
+		cleanuponaisle(i);
 	}
+}
+
+void Search::cleanuponaisle(int i) {
+	std::stringstream aisle;
+	aisle << pathControls.substr(0, pathControls.size() - 12);
+	aisle << "output/output_" << i;
+	std::vector<std::string> filenames(33);
+	filenames[0] = "FDS_controls.sto";
+	filenames[1] = "FDS_PointKinematics1_R.Clavicle_acc.sto";
+	filenames[2] = "FDS_PointKinematics1_R.Clavicle_pos.sto";
+	filenames[3] = "FDS_PointKinematics1_R.Clavicle_vel.sto";
+	filenames[4] = "FDS_PointKinematics2_C7_acc.sto";
+	filenames[5] = "FDS_PointKinematics2_C7_pos.sto";
+	filenames[6] = "FDS_PointKinematics2_C7_vel.sto";
+	filenames[7] = "FDS_PointKinematics3_R.Shoulder_acc.sto";
+	filenames[8] = "FDS_PointKinematics3_R.Shoulder_pos.sto";
+	filenames[9] = "FDS_PointKinematics3_R.Shoulder_vel.sto";
+	filenames[10] = "FDS_PointKinematics4_R.Biceps_acc.sto";
+	filenames[11] = "FDS_PointKinematics4_R.Biceps_pos.sto";
+	filenames[12] = "FDS_PointKinematics4_R.Biceps_vel.sto";
+	filenames[13] = "FDS_PointKinematics5_R.Elbow.Lateral_acc.sto";
+	filenames[14] = "FDS_PointKinematics5_R.Elbow.Lateral_pos.sto";
+	filenames[15] = "FDS_PointKinematics5_R.Elbow.Lateral_vel.sto";
+	filenames[16] = "FDS_PointKinematics6_R.Forearm_acc.sto";
+	filenames[17] = "FDS_PointKinematics6_R.Forearm_pos.sto";
+	filenames[18] = "FDS_PointKinematics6_R.Forearm_vel.sto";
+	filenames[19] = "FDS_PointKinematics7_R.Radius_acc.sto";
+	filenames[20] = "FDS_PointKinematics7_R.Radius_pos.sto";
+	filenames[21] = "FDS_PointKinematics7_R.Radius_vel.sto";
+	filenames[22] = "FDS_PointKinematics8_Handle_acc.sto";
+	filenames[23] = "FDS_PointKinematics8_Handle_pos.sto";
+	filenames[24] = "FDS_PointKinematics8_Handle_vel.sto";
+	filenames[25] = "FDS_PointKinematics9_R.Elbow.Medial_acc.sto";
+	filenames[26] = "FDS_PointKinematics9_R.Elbow.Medial_pos.sto";
+	filenames[27] = "FDS_PointKinematics9_R.Elbow.Medial_vel.sto";
+	filenames[28] = "FDS_PointKinematics10_R.Ulna_acc.sto";
+	filenames[29] = "FDS_PointKinematics10_R.Ulna_pos.sto";
+	filenames[30] = "FDS_PointKinematics10_R.Ulna_vel.sto";
+	filenames[31] = "FDS_states.sto";
+	filenames[32] = "FDS_states_degrees.mot";
+
+	for (int k = 0; k < 33; k++) {
+		std::stringstream here;
+		here << aisle.str() << "/" << filenames[k];
+		//std::cout << here.str() << std::endl;
+		DeleteFile(here.str().c_str());
+	}
+	RemoveDirectory(aisle.str().c_str());
 }
 
 void Search::customRRT() {

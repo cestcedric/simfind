@@ -53,6 +53,7 @@ private:
 	
 	double distance(std::vector<double>, std::string);
 	void initResults();
+	void cleanuponaisle(int);
 
 	//search methods
 	void enumerateSearch();
