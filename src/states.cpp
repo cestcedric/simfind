@@ -86,8 +86,8 @@ std::vector<double> States::getAngles(std::string s) {
 	//get setable values
 	int p;
 
-	//skip first 12 values
-	for (int i = 0; i < 12; i++) {
+	//skip first 12 values, time has no ".", so skip 11 dots
+	for (int i = 0; i < 11; i++) {
 		p = line.find(".");
 		line.erase(0, p + 21);
 	}

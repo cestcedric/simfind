@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 		std::string initialState = "C:/files/output/states/initialState_0.sto";
 		*/
 		
-		Search s(setup, 3000, 3500);
+		Search s(setup, 4000, 5000);
 
 		s.setModel(model);
 		s.setControls(controls);

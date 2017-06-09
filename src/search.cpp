@@ -402,9 +402,8 @@ std::vector<double> Search::setAngles() {
 	return angles;
 }
 
-//euclidean distance -> really does not choose many starting points
-//linear distance -> ridiculously low amount of different starting points
-//weird distance that is not even a distance -> pretty good randomization
+//euclidean distance
+//manhattan distance
 double Search::distance(std::vector<double> r, std::string s) {
 	States t;
 	std::vector<double> a = t.getAngles(s);
@@ -418,17 +417,11 @@ double Search::distance(std::vector<double> r, std::string s) {
 
 	d = sqrt(d);
 	*/
-	/*
+	
 	for (int i = 0; i < a.size(); i++) {
 		d = d + abs(r[i] - a[i]);
 	}
-	*/
 	
-	for (int i = 0; i < a.size(); i++) {
-		d = d + abs(abs(r[i]) - abs(a[i]));
-	}
-	
-
 	return d;
 }
 
