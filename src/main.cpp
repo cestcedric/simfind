@@ -28,8 +28,13 @@ int main(int argc, char* argv[]) {
 	}
 	else
 	{
+		int start = std::stoi(argv[1]);
+		int end = std::stoi(argv[2]);
+
+		std::cout << "Bereich: " << start << " -> " << end << std::endl;
 		
 		//////////////////////////////////////////////
+		/////set the location of your files here//////
 		//////////////////////////////////////////////
 
 
@@ -47,7 +52,7 @@ int main(int argc, char* argv[]) {
 		std::string initialState = "C:/files/output/states/initialState_0.sto";
 		*/
 		
-		Search s(setup, 4000, 5000);
+		Search s(setup, start, end);
 
 		s.setModel(model);
 		s.setControls(controls);
@@ -59,19 +64,5 @@ int main(int argc, char* argv[]) {
 		s.cleanup();
 
 		s.run();
-		
-
-		//States t;
-		//t.getAngles(initialState);
-		
-		//std::string from = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output_Clustering/output_16/FDS_states.sto";
-		//std::string to = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/states/test.sto";
-
-
-
-		//////////////////////////////////////////////
-		//////////////////////////////////////////////
-		std::cout << "please call the application like this: 'app path/to/model path/to/controlsTemplate path/to/initialStateTemplate'" << std::endl;
-		
 	}
 }
