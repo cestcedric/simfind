@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 		s.setModel(model);
 		s.setControls(controls);
 		s.setInitialState(initialState);
-		s.setIntervall(0.1);
+		s.setIntervall(0.05);
 
 		s.run();
 	}
@@ -30,6 +30,9 @@ int main(int argc, char* argv[]) {
 	{
 		int start = std::stoi(argv[1]);
 		int end = std::stoi(argv[2]);
+
+		//int start = 0;
+		//int end = 10;
 
 		std::cout << "Bereich: " << start << " -> " << end << std::endl;
 		
@@ -57,10 +60,12 @@ int main(int argc, char* argv[]) {
 		s.setModel(model);
 		s.setControls(controls);
 		s.setInitialState(initialState);
-		//s.enumerate(true);
-		s.random(true);//RRT
-		s.stepsRRT(10);
-		s.setIntervall(0.1);
+		//s.enumerate();
+		s.randomTree();
+		//s.totallyrandom();
+		s.stepsRRT(5);
+		s.triesRRT(5);
+		s.setIntervall(0.05);
 		s.cleanup();
 
 		s.run();

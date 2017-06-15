@@ -17,9 +17,9 @@ Search::Search(std::string setup, int start, int end) {
 	ex = new Excitation(0);
 	std::vector<Results> v(10);
 	results = v;
-	b = c = g = e = rrt = rrtp = false;
+	b = c = g = e = r = rrt = rrtp = false;
 	steps = 5;
-	iterations = 2500;
+	iterations = end - start;
 	this->start = start;
 	this->end = end;
 }
@@ -112,7 +112,13 @@ void Search::run() {
 		}
 		else
 		{
-			customRRT();
+			if (r) {
+				randomSearch();
+			}
+			else
+			{
+				customRRT();
+			}
 		}
 	}
 }
@@ -132,127 +138,191 @@ void Search::enumerateSearch() {
 	g = true;
 	for (int i = 0; i < 512; i++) {
 
-		//std::clock_t startTime = std::clock();
-
 		//reload model everytime because it slows down otherwise
 		OpenSim::Model model = OpenSim::Model(pathModel);
-
 		OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
-
-		//auto t1 = std::clock() - startTime;
-		//startTime = std::clock();
-
 		fwd->setModel(model);
-
-		//auto t2 = std::clock() - startTime;
-		//startTime = std::clock();
-
 		fwd->setStatesFileName(pathInitialState);
-
-		//auto t3 = std::clock() - startTime;
-		//startTime = std::clock();
+		fwd->setInitialTime(0);
+		fwd->setFinalTime(intervall);
 
 		//generate excitations
 		std::vector<double> v = getExcitations(i);
 
-		//auto t4 = std::clock() - startTime;
-		//startTime = std::clock();
-
 		//generate controls file
 		ex->setNumber(i);
-
-		//auto t5 = std::clock() - startTime;
-		//startTime = std::clock();
-
 		std::string controls = ex->excite(v);
-
-		//auto t6 = std::clock() - startTime;
-		//startTime = std::clock();
 
 		//configure forward tool
 		std::stringstream out;
 		out << "output/output_" << i;
-
-		//auto t7 = std::clock() - startTime;
-		//startTime = std::clock();
-
 		fwd->setResultsDir(out.str());
-
-		//auto t8 = std::clock() - startTime;
-		//startTime = std::clock();
-
 		//fwd->setControlsFileName(controls);
-		
-		//auto t9 = std::clock() - startTime;
-		//startTime = std::clock();
 
 		fwd->run();
-		
-		//auto t10 = std::clock() - startTime;
-		//startTime = std::clock();
 
 		//get results from analysis
 		addResults(i);
-		
-		//auto t11 = std::clock() - startTime;
 
-		//std::ofstream times("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/times.txt", std::ios_base::app);
-		//times << 1.e3*t1 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t2 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t3 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t4 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t5 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t6 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t7 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t8 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t9 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t10 / CLOCKS_PER_SEC << "\t\t";
-		//times << 1.e3*t11 / CLOCKS_PER_SEC << "\n";
-		//times.close();
+		//delete unneeded files
+		if (c) {
+			cleanuponaisle(i);
+		}
 	}
 }
 
 void Search::standardRRT() {
 	iterations = end - start;
 	b = true;
-	g = false;
-	e = false;
 
-	int numOfStates = 1;
+	int numOfStates = start + 1;
 	States st;
 
 	std::string directory = pathControls.substr(0, pathControls.size() - 12);
 	std::string next;
 
+
+	//////////////////////////////////////////////////
+	//////////////////////////////////////////////////
+	//debugging
+	std::stringstream controlOutput;
+	controlOutput << directory << "output/states.txt";
+	//////////////////////////////////////////////////
+	//////////////////////////////////////////////////
+
 	for (int i = start; i < end; i++) {
-
-		//reload model every iteration to avoid "contamination"
-		OpenSim::Model model = OpenSim::Model(pathModel);
-
-		OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
-		fwd->setModel(model);
 		
+		//find target point
+		std::vector<double> random = setAngles();
+		std::cout << "random" << std::endl;
+
 		//get new initial state
-		next = findNext(directory, numOfStates);
-		fwd->setStatesFileName(next);
+		next = findNext(directory, numOfStates, random);
 
-		//random excitations
-		std::vector<double> v = getExcitations(i);
-		ex->setNumber(i);
-		std::string controls = ex->excite(v);
+		for (int k = 0; k < tries; k++) {
+			//reload model every iteration to avoid "contamination"
+			OpenSim::Model model = OpenSim::Model(pathModel);
 
-		//set output
-		std::stringstream out;
-		out << "output/output_" << i;
-		fwd->setResultsDir(out.str());
+			OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
+			fwd->setModel(model);
 
-		//set time intervall
-		fwd->setInitialTime(0);
-		fwd->setFinalTime(intervall / (double) steps);
+			//new initital state
+			fwd->setStatesFileName(next);
+
+			//////////////////////////////////////////////////
+			//////////////////////////////////////////////////
+			if (k == 0) {
+				std::ofstream states(controlOutput.str(), std::ios_base::app);
+				states << fwd->getStatesFileName() << std::endl;
+			}
+			//////////////////////////////////////////////////
+			//////////////////////////////////////////////////
+
+			//random excitations
+			std::vector<double> v = getExcitations(i);
+			ex->setNumber(i);
+			std::string controls = ex->excite(v);
+
+			//set output
+			std::stringstream out;
+			out << "output/output_" << i << "_" << k;
+			fwd->setResultsDir(out.str());
+
+			//set time intervall
+			fwd->setInitialTime(0);
+			fwd->setFinalTime(intervall / (double)steps);
+
+			//run
+			fwd->run();			
+
+			//temporarily save final state
+			std::stringstream newState;
+			std::stringstream results;
+			newState << directory << "output/states/initialState_" << i + 1 << "_" << k << ".sto";
+			results << directory << "output/output_" << i << "_" << k << "/FDS_states.sto";
+			st.save(results.str(), newState.str(), st.getRank(next) + 1);
+		}
+
+		//find best final state
+		//////////////////////////////////////////////////
+		//////////////////////////////////////////////////
+		std::ofstream states(controlOutput.str(), std::ios_base::app);
+		//////////////////////////////////////////////////
+		//////////////////////////////////////////////////
+		int bestState = 0;
+		std::stringstream b;
+		b << directory << "output/states/initialState_" << i + 1 << "_" << 0 << ".sto";
+		std::string bestStateName = b.str();
+		double d = distance(random, b.str());
+		double min = d;
+		for (int k = 0; k < tries; k++) {
+			std::stringstream best;
+			best << directory << "output/states/initialState_" << i + 1 << "_" << k << ".sto";
+
+			d = distance(random, best.str());
+
+			//////////////////////////////////////////////////
+			//////////////////////////////////////////////////
+			states << d << " : " << best.str() << std::endl;
+			//////////////////////////////////////////////////
+			//////////////////////////////////////////////////
+
+			if (d < min) {
+				min = d;
+				bestState = k;
+				bestStateName = best.str();
+			}
+		}
+
+		//////////////////////////////////////////////////
+		//////////////////////////////////////////////////
+		states << "\t -> " << bestState << std::endl;
+		//////////////////////////////////////////////////
+		//////////////////////////////////////////////////
+
+		////reload model every iteration to avoid "contamination"
+		//OpenSim::Model model = OpenSim::Model(pathModel);
+
+		//OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
+		//fwd->setModel(model);
+		//
+		////find target point
+		//std::vector<double> target = setAngles();
+
+		////get new initial state
+		//next = findNext(directory, numOfStates, target);
+		//fwd->setStatesFileName(next);
+
+		////random excitations
+		//std::vector<double> v = getExcitations(i);
+		//ex->setNumber(i);
+		//std::string controls = ex->excite(v);
+
+		////set output
+		//std::stringstream out;
+		//out << "output/output_" << i;
+		//fwd->setResultsDir(out.str());
+
+		////set time intervall
+		//fwd->setInitialTime(0);
+		//fwd->setFinalTime(intervall / (double) steps);
 
 
-		//run
-		fwd->run();
+		////run
+		//fwd->run()
+
+		//move best state to folder without subscript, to use other methods
+		std::stringstream sub;
+		std::stringstream fin;
+		sub << directory << "output/output_" << i << "_" << bestState;
+		fin << directory << "output/output_" << i;
+
+		MoveFile(sub.str().c_str(), fin.str().c_str());
+		
+		//delete old stuff
+		for (int k = 0; k < steps; k++) {
+			cleanSteps(i, k);
+		}
 
 		//add final marker positions
 		addResults(i);
@@ -264,13 +334,6 @@ void Search::standardRRT() {
 		results << directory << "output/output_" << i << "/FDS_states.sto";
 		st.save(results.str(), newState.str(), st.getRank(next) + 1);
 
-
-		std::stringstream controlOutput;
-		controlOutput << directory << "output/states.txt";
-
-		std::ofstream states(controlOutput.str(), std::ios_base::app);
-		states << fwd->getStatesFileName() << std::endl;
-
 		numOfStates++;
 
 		if (c) {
@@ -281,6 +344,57 @@ void Search::standardRRT() {
 
 void Search::cleanup() {
 	c = true;
+}
+
+void Search::cleanSteps(int i, int j) {
+	std::stringstream step;
+	step << pathControls.substr(0, pathControls.size() - 12);
+	step << "output/output_" << i << "_" << j;
+	std::vector<std::string> filenames(33);
+	filenames[0] = "FDS_controls.sto";
+	filenames[1] = "FDS_PointKinematics1_R.Clavicle_acc.sto";
+	filenames[2] = "FDS_PointKinematics1_R.Clavicle_pos.sto";
+	filenames[3] = "FDS_PointKinematics1_R.Clavicle_vel.sto";
+	filenames[4] = "FDS_PointKinematics2_C7_acc.sto";
+	filenames[5] = "FDS_PointKinematics2_C7_pos.sto";
+	filenames[6] = "FDS_PointKinematics2_C7_vel.sto";
+	filenames[7] = "FDS_PointKinematics3_R.Shoulder_acc.sto";
+	filenames[8] = "FDS_PointKinematics3_R.Shoulder_pos.sto";
+	filenames[9] = "FDS_PointKinematics3_R.Shoulder_vel.sto";
+	filenames[10] = "FDS_PointKinematics4_R.Biceps_acc.sto";
+	filenames[11] = "FDS_PointKinematics4_R.Biceps_pos.sto";
+	filenames[12] = "FDS_PointKinematics4_R.Biceps_vel.sto";
+	filenames[13] = "FDS_PointKinematics5_R.Elbow.Lateral_acc.sto";
+	filenames[14] = "FDS_PointKinematics5_R.Elbow.Lateral_pos.sto";
+	filenames[15] = "FDS_PointKinematics5_R.Elbow.Lateral_vel.sto";
+	filenames[16] = "FDS_PointKinematics6_R.Forearm_acc.sto";
+	filenames[17] = "FDS_PointKinematics6_R.Forearm_pos.sto";
+	filenames[18] = "FDS_PointKinematics6_R.Forearm_vel.sto";
+	filenames[19] = "FDS_PointKinematics7_R.Radius_acc.sto";
+	filenames[20] = "FDS_PointKinematics7_R.Radius_pos.sto";
+	filenames[21] = "FDS_PointKinematics7_R.Radius_vel.sto";
+	filenames[22] = "FDS_PointKinematics8_Handle_acc.sto";
+	filenames[23] = "FDS_PointKinematics8_Handle_pos.sto";
+	filenames[24] = "FDS_PointKinematics8_Handle_vel.sto";
+	filenames[25] = "FDS_PointKinematics9_R.Elbow.Medial_acc.sto";
+	filenames[26] = "FDS_PointKinematics9_R.Elbow.Medial_pos.sto";
+	filenames[27] = "FDS_PointKinematics9_R.Elbow.Medial_vel.sto";
+	filenames[28] = "FDS_PointKinematics10_R.Ulna_acc.sto";
+	filenames[29] = "FDS_PointKinematics10_R.Ulna_pos.sto";
+	filenames[30] = "FDS_PointKinematics10_R.Ulna_vel.sto";
+	filenames[31] = "FDS_states.sto";
+	filenames[32] = "FDS_states_degrees.mot";
+
+	for (int k = 0; k < 33; k++) {
+		std::stringstream here;
+		here << step.str() << "/" << filenames[k];
+		DeleteFile(here.str().c_str());
+	}
+	RemoveDirectory(step.str().c_str());
+
+	std::stringstream statefile;
+	statefile << pathControls.substr(0, pathControls.size() - 12) << "output/states/initialState_" << i + 1 << "_" << j << ".sto";
+	DeleteFile(statefile.str().c_str());
 }
 
 void Search::cleanuponaisle(int i) {
@@ -325,7 +439,6 @@ void Search::cleanuponaisle(int i) {
 	for (int k = 0; k < 33; k++) {
 		std::stringstream here;
 		here << aisle.str() << "/" << filenames[k];
-		//std::cout << here.str() << std::endl;
 		DeleteFile(here.str().c_str());
 	}
 	RemoveDirectory(aisle.str().c_str());
@@ -339,21 +452,60 @@ void Search::customRRT() {
 
 }
 
+void Search::randomSearch() {
+	b = true;
+	g = false;
+
+	std::string directory = pathControls.substr(0, pathControls.size() - 12);
+	std::string next;
+
+	for (int i = start; i < end; i++) {
+			//reload model every iteration to avoid "contamination"
+			OpenSim::Model model = OpenSim::Model(pathModel);
+
+			OpenSim::ForwardTool *fwd = new OpenSim::ForwardTool(pathSetup);
+			fwd->setModel(model);
+
+			//new initital state
+			fwd->setStatesFileName(pathInitialState);
+
+			//random excitations
+			std::vector<double> v = getExcitations(i);
+			ex->setNumber(i);
+			std::string controls = ex->excite(v);
+
+			//set output
+			std::stringstream out;
+			out << "output/output_" << i;
+			fwd->setResultsDir(out.str());
+
+			//set time intervall
+			fwd->setInitialTime(0);
+			fwd->setFinalTime(intervall);
+
+			//run
+			fwd->run();
+
+			//get results from analysis
+			addResults(i);
+
+			//delete unneeded files
+			if (c) {
+				cleanuponaisle(i);
+			}
+		}
+}
+
 //best state = closest to random generated position AND time still smaller than the intervall
 // => take state farther state if nearest is too late
-std::string Search::findNext(std::string directory, int n) {
+std::string Search::findNext(std::string directory, int n, std::vector<double> random) {
 	std::string best;
 	States st;
-	
-	//generate random state = angles
-	std::vector<double> random = setAngles();
 
 	std::stringstream init;
 	init << directory << "output/states/initialState_0.sto";
 
 	double minDist = distance(random, init.str()) + 1;
-
-	std::cout << steps << std::endl;
 	
 	//find nearest old state nos
 	for (int s = 0; s < n; s++) {
@@ -367,7 +519,6 @@ std::string Search::findNext(std::string directory, int n) {
 			best = nos.str();
 		}
 	}
-	std::cout << "best : " << best << std::endl;
 	return best;
 }
 
@@ -521,24 +672,24 @@ std::vector<double>  Search::readFile(std::string path) {
 	return position;
 }
 
-void Search::group(bool g) {
-	this->g = g;
+void Search::group() {
+	this->g = true;
 }
 
-void Search::binary(bool b) {
-	this->b = b;
+void Search::binary() {
+	this->b = true;
 }
 
-void Search::enumerate(bool e) {
-	this->e = e;
+void Search::enumerate() {
+	this->e = true;
 }
 
-void Search::random(bool rrt) {
-	this->rrt = rrt;
+void Search::randomTree() {
+	this->rrt = true;
 }
 
-void Search::randomwithbenefits(bool rrtp) {
-	this->rrtp = rrtp;
+void Search::randomwithbenefits() {
+	this->rrtp = true;
 }
 
 void Search::stepsRRT(int steps) {
@@ -547,4 +698,12 @@ void Search::stepsRRT(int steps) {
 
 void Search::iterationsRRT(int iterations) {
 	this->iterations = iterations;
+}
+
+void Search::totallyrandom() {
+	this->r = true;
+}
+
+void Search::triesRRT(int tries) {
+	this->tries = tries;
 }

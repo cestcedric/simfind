@@ -14,21 +14,19 @@ public:
 	void setControls(std::string);
 	void setInitialState(std::string);
 	void run();
-	void group(bool);
-	void binary(bool);
-	void enumerate(bool);
-	void random(bool);
-	void randomwithbenefits(bool);
+	void group();
+	void binary();
+	void enumerate();
+	void randomTree();
+	void randomwithbenefits();
+	void totallyrandom();
 
 	void stepsRRT(int);
-	
+	void triesRRT(int);
 
 	void cleanup();
 
 private:
-	void iterationsRRT(int);
-	//OpenSim::ForwardTool *fwd;
-	//OpenSim::Model model;
 	Excitation *ex;
 	std::string pathModel;
 	std::string pathControls;
@@ -43,13 +41,17 @@ private:
 	bool e;
 	bool rrt;
 	bool rrtp;
+	bool r;
 	int steps;
 	int iterations;
+	int tries;
 
 	int start;
 	int end;
 
 	bool c;
+
+	void iterationsRRT(int);
 
 	std::vector<double> getExcitations(int n);
 	void addResults(int n);
@@ -57,14 +59,16 @@ private:
 
 	std::vector<double> setAngles();
 
-	std::string findNext(std::string, int);
+	std::string findNext(std::string, int, std::vector<double>);
 	
 	double distance(std::vector<double>, std::string);
 	void initResults();
 	void cleanuponaisle(int);
+	void cleanSteps(int, int);
 
 	//search methods
 	void enumerateSearch();
 	void standardRRT();
 	void customRRT();
+	void randomSearch();
 };
