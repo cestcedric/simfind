@@ -64,8 +64,9 @@ int main(int argc, char* argv[]) {
 		s.randomTree();
 		//s.totallyrandom();
 		s.stepsRRT(5);
-		s.triesRRT(5);
+		s.triesRRT(1);
 		s.setIntervall(0.05);
+		s.group();
 		s.cleanup();
 
 		s.run();

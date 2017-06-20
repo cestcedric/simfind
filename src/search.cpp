@@ -320,7 +320,7 @@ void Search::standardRRT() {
 		MoveFile(sub.str().c_str(), fin.str().c_str());
 		
 		//delete old stuff
-		for (int k = 0; k < steps; k++) {
+		for (int k = 0; k < tries; k++) {
 			cleanSteps(i, k);
 		}
 
