@@ -65,7 +65,8 @@ int main(int argc, char* argv[]) {
 		//s.totallyrandom();
 		s.stepsRRT(10);
 		s.triesRRT(1);
-		s.setIntervall(0.05);
+		double t = 0.05 / 3;
+		s.setIntervall(t);
 		s.group();
 		s.cleanup();
 

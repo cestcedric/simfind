@@ -165,6 +165,19 @@ void Search::enumerateSearch() {
 		//get results from analysis
 		addResults(i);
 
+		/////////////////////////////////////
+		/////////////////////////////////////
+		//temporarily save final state
+
+		std::string directory = pathControls.substr(0, pathControls.size() - 12);
+		std::stringstream newState;
+		std::stringstream results;
+		newState << directory << "output/states/initialState_" << i + 1 << ".sto";//+ 513 for 0.034s, + 1 for 0.017s
+		results << directory << "output/output_" << i << "/FDS_states.sto";
+		st.save(results.str(), newState.str(), 2);//2 for 0.017s, 3 for 0.034s
+		/////////////////////////////////////
+		/////////////////////////////////////
+
 		//delete unneeded files
 		if (c) {
 			cleanuponaisle(i);
