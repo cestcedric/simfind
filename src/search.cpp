@@ -137,6 +137,9 @@ void Search::initResults() {
 void Search::enumerateSearch() {
 	b = true;
 	g = true;
+
+	States st;
+
 	for (int i = 0; i < 1024; i++) {
 
 		//reload model everytime because it slows down otherwise
