@@ -60,10 +60,10 @@ int main(int argc, char* argv[]) {
 		s.setModel(model);
 		s.setControls(controls);
 		s.setInitialState(initialState);
-		//s.enumerate();
-		s.randomTree();
+		s.enumerate();
+		//s.randomTree();
 		//s.totallyrandom();
-		s.stepsRRT(5);
+		s.stepsRRT(10);
 		s.triesRRT(1);
 		s.setIntervall(0.05);
 		s.group();

@@ -73,6 +73,7 @@ std::vector<double> Search::getExcitations(int n) {
 		v[27] = (n / 64) % 2;
 		v[40] = (n / 128) % 2;
 		v[19] = (n / 256) % 2;
+		v[6] = (n / 512) % 2;
 	}
 
 	if (g && b) {//groups of muscles, only grouping when also binary excitation
@@ -136,7 +137,7 @@ void Search::initResults() {
 void Search::enumerateSearch() {
 	b = true;
 	g = true;
-	for (int i = 0; i < 512; i++) {
+	for (int i = 0; i < 1024; i++) {
 
 		//reload model everytime because it slows down otherwise
 		OpenSim::Model model = OpenSim::Model(pathModel);
