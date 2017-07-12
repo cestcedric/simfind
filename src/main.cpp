@@ -40,20 +40,20 @@ int main(int argc, char* argv[]) {
 		/////set the location of your files here//////
 		//////////////////////////////////////////////
 
-
+		/*
 		std::string model = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/model.osim";
 		std::string setup = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/setup.xml";
 		std::string controls = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/controls.xml";
 		//std::string initialState = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/CMC_Reach8_states_abbrev.sto";
 		std::string initialState = "E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/states/initialState_0.sto";
-
-		/*
+		*/
+		
 		std::string model = "C:/files/model.osim";
 		std::string setup = "C:/files/setup.xml";
 		std::string controls = "C:/files/controls.xml";
 		//std::string initialState = "C:/files/CMC_Reach8_states_abbrev.sto";
 		std::string initialState = "C:/files/output/states/initialState_0.sto";
-		*/
+		
 		
 		Search s(setup, start, end);
 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 		s.triesRRT(1);
 		double t = 0.05 / 3;
 		s.setIntervall(t);
-		s.group();
+		//s.group();
 		s.cleanup();
 
 		s.run();
