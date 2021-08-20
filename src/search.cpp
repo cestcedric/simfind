@@ -547,8 +547,7 @@ std::vector<double> Search::setAngles() {
 	angles[5] = deviation(gen);
 	angles[6] = flexion(gen);
 
-	std::ofstream angle("E:/Dokumente/Schule/tum/Informatik/6/Bachelor-Arbeit/Code/SimFind/files/output/angles.txt", std::ios_base::app);
-	//std::ofstream angle("C:/files/output/angles.txt", std::ios_base::app);
+	std::ofstream angle("path/to/repository/SimFind/files/output/angles.txt", std::ios_base::app);
 	angle << angles[0] << "\t" << angles[1] << "\t" << angles[2] << "\t" << angles[3] << "\t" << angles[4] << "\t" << angles[5] << "\t" << angles[6] << "\t" << std::endl;
 
 	return angles;
