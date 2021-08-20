@@ -1,4 +1,4 @@
-# SimFind
+# SimFind (Reachset Conformance Testing of Human Arms)
 
 Created during my bachelor's thesis, this repository contains code to check the space a human arm can reach in a specified timespan.
 The corresponding paper can be found [here](https://mediatum.ub.tum.de/doc/1430188/179228.pdf).
