@@ -1,0 +1,15 @@
+Position in output directory:
+	-> FDS_PointKinematics[id]_[name]_pos.sto
+	-> Time 	x	y	z
+
+Controls.xml:
+	-> <x_nodes>
+			<ControlLinearNode>
+				<t>0</t>				<--- start time
+				<value>0.1</value>		<--- initial value -> 15 + [muscle-id - 1]*40
+			</ControlLinearNode>		//unneeded values in between
+			<ControlLinearNode>
+				<t>1</t>				<--- end time
+				<value>0.1</value>		<--- final value -> 19 + [muscle-id - 1]*40
+			</ControlLinearNode>
+		</x_nodes>
